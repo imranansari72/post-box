@@ -7,31 +7,35 @@ import UserContext from "../../store/userContext/UserContext";
 const Left = (props) => {
   const {
     showPosts,
-    showUpdate,
+    showChangePassword,
     showCreate,
     handlePosts,
-    handleUpdate,
+    handleChangePassword,
     handleCreate,
   } = props;
 
-  const authCtx = useContext(AuthContext);
   const userCtx = useContext(UserContext);
-
   return (
     <div className=" bg-gray-200 px-10 shadow-xl">
       {/* profile */}
       <div className="flex w-full items-center space-x-4 mt-10 border-b-2 border-gray-500 pb-6">
-        <Avatar size={'24'} />
+        <Avatar
+          size={"24"}
+          img={userCtx.user.img}
+          firstAlpha={userCtx.user.name[0]}
+        />
         <h2 className="text-4xl">{userCtx.user.name}</h2>
       </div>
       {/* nav buttons */}
       <ul className="menu w-full justify-center menu-horizontal lg:menu-vertical">
         <li className="m-1">
-          <button className={showPosts && "active "} onClick={handlePosts}>Posts</button>
+          <button className={showPosts && "active "} onClick={handlePosts}>
+            Posts
+          </button>
         </li>
         <li className="m-1">
-          <button className={showUpdate  && "active"} onClick={handleUpdate}>
-            Update Profile
+          <button className={showChangePassword && "active"} onClick={handleChangePassword}>
+            Change Password
           </button>
         </li>
         <li className="m-1">

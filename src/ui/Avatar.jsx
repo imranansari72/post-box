@@ -2,21 +2,13 @@ import React from "react";
 import UserContext from "../store/userContext/UserContext";
 import { useContext } from "react";
 
-const Avatar = (props) => {
-  const userCtx = useContext(UserContext);
-  let firstAlpha = null;
-  let img = props?.img;
-
-  if (img == undefined) {
-    img = userCtx.user?.profilePic;
-    firstAlpha = userCtx.user?.name[0];
-  }
+const Avatar = ({ img, firstAlpha, size }) => {
   return (
     <>
       {img == undefined ? (
         <div className="avatar placeholder">
           <div
-            className={`bg-neutral-focus text-neutral-content rounded-full  w-${props.size}`}
+            className={`bg-neutral-focus text-neutral-content rounded-full  w-${size}`}
           >
             <span className="text-3xl">{firstAlpha}</span>
           </div>

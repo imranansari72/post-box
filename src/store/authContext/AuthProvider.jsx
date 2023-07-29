@@ -42,12 +42,15 @@ const userReducer = (state, action) => {
   }
 
   if (action.type == "SIGNUP") {
+    console.log(action.payload);
     users.push({
       id: users.length + 1,
       email: action.payload.email,
+      name: action.payload.name,
       password: action.payload.password,
       posts: [],
     });
+    console.log(users, "users");
     return {
       ...state,
       userId: users[users.length - 1].id,

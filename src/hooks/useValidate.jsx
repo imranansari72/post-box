@@ -16,6 +16,13 @@ const validateReducer = (state, action) => {
       isValid: action.validation(action.val),
     };
   }
+  // resert the values
+  if (action.type === "RESET") {
+    return {
+      value: "",
+      isValid: null,
+    };
+  }
 };
 
 const useValidate = (validate, initialState) => {
@@ -29,6 +36,11 @@ const useValidate = (validate, initialState) => {
     });
   };
 
+  // reset
+  const reset = () => {
+    dispatcher({ type: "RESET" });
+  }
+
   const onBlurHandler = (event) => {
     dispatcher({
       type: INPUT_BLUR,
@@ -37,7 +49,7 @@ const useValidate = (validate, initialState) => {
     });
   };
 
-  return [state, onChangeHandler, onBlurHandler];
+  return [state, onChangeHandler, onBlurHandler, reset];
 };
 
 export default useValidate;

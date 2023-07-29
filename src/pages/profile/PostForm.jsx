@@ -3,7 +3,7 @@ import Input from "../../ui/Input";
 import InputImage from "../../ui/InputImage";
 
 const PostForm = (props) => {
-  const { submitHandler, inputState, inputHandler, onImageDelete } = props;
+  const { submitHandler, inputState, inputHandler, onImageDelete, handleCancel } = props;
 
   return (
     <form
@@ -43,6 +43,9 @@ const PostForm = (props) => {
         />
         <button type="submit" className="btn btn-primary">
           Upload Post
+        </button>
+        <button type="submit" className="btn" onClick={handleCancel}>
+          Cancel
         </button>
       </div>
     </form>

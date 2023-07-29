@@ -1,14 +1,17 @@
 import React, { useContext, useState, useEffect, forceUpdate } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import AuthContext from "../../store/authContext/AuthContext";
 import useValidate from "../../hooks/useValidate";
 import Input from "../../ui/Input";
 import UserContext from "../../store/userContext/UserContext";
 import BoxAlert from "../../ui/BoxAlert";
+import PasswordInput from "../../ui/PasswordInput";
 
 const Login = () => {
   const authCtx = useContext(AuthContext);
   const userCtx = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const [email, onEmailChange, onEmailBlur] = useValidate(
     (value) => value.includes("@"),
@@ -45,7 +48,7 @@ const Login = () => {
   };
 
   if (authCtx.isAuthenticated) {
-    return <Navigate to={`/feed`} />;
+    return <Navigate to={`/profile`} />;
   }
 
   return (
@@ -65,7 +68,9 @@ const Login = () => {
         >
           <div className="card-body">
             {/* invalid */}
-            {authCtx.error && <BoxAlert message={"Invalid credentials"} />}
+            {authCtx.error && (
+              <BoxAlert message={"Invalid credentials"} type={"error"} />
+            )}
 
             {/* email */}
             <Input
@@ -80,27 +85,23 @@ const Login = () => {
               onBlur={onEmailBlur}
               label="Email"
             />
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               placeholder="password"
-              className={`input input-bordered focus:outline-none  ${
-                password.isValid === false ? " input-error" : ""
-              }`}
+              error={password.isValid === false ? " input-error" : ""}
               value={password.value}
               onChange={onPasswordChange}
               onBlur={onPasswordBlur}
               label="Password"
             />
-            <div className="grid grid-cols-2 gap-2 mt-4 text-center items-center justify-center">
+            <div className="grid grid-cols-1 gap-2 mt-4 text-center items-center justify-center">
               <button className="btn btn-primary" type="submit">
                 Login
               </button>
-              <button className="btn">
-                <Link to={`/signup`} className="form-control">
-                  Sign up
-                </Link>
-              </button>
+              <div className="divider">OR</div>
+              <Link to={`/signup`} className="form-control btn">
+                Sign up
+              </Link>
             </div>
           </div>
         </form>

@@ -1,62 +1,71 @@
 import React from "react";
-import Avatar from "../../ui/Avatar";
-import { useContext, useReducer } from "react";
-import AuthContext from "../../store/authContext/AuthContext";
+import { useState, useReducer } from "react";
 import Left from "./Left";
 import Posts from "./Posts";
 import CreatePost from "./CreatePost";
-import UpdateProfile from "./UpdateProfile";
+import ChangePassword from "./ChangePassword";
 
 const contentReducer = (state, action) => {
   switch (action.type) {
     case "POSTS":
       return {
         showPosts: true,
-        showUpdate: false,
+        showChangePassword: false,
         showCreate: false,
       };
-    case "UPDATE":
+    case "CHANGE_PASSWORD":
       return {
         showPosts: false,
-        showUpdate: true,
+        showChangePassword: true,
         showCreate: false,
       };
     case "CREATE":
       return {
         showPosts: false,
-        showUpdate: false,
+        showChangePassword: false,
         showCreate: true,
       };
   }
 };
 
 const Profile = () => {
+
+
   const [contentState, contentDispatcher] = useReducer(contentReducer, {
     showPosts: true,
-    showUpdate: false,
+    showChangePassowrd: false,
     showCreate: false,
   });
+
+  const handleCreate = () => {
+    contentDispatcher({ type: "CREATE" });
+  }
+
+  const handlePosts = () => {
+    console.log("handlePosts");
+    contentDispatcher({ type: "POSTS" });
+  }
 
   return (
     <div className="flex flex-col lg:flex-row bg-base-200 min-h-screen">
       {/* right */}
       <Left
         showPosts={contentState.showPosts}
-        showUpdate={contentState.showUpdate}
+        showChangePassword={contentState.showChangePassword}
         showCreate={contentState.showCreate}
         handlePosts={() => contentDispatcher({ type: "POSTS" })}
-        handleUpdate={() => contentDispatcher({ type: "UPDATE" })}
+        handleChangePassword={() => contentDispatcher({ type: "CHANGE_PASSWORD" })}
         handleCreate={() => contentDispatcher({ type: "CREATE" })}
       />
-      <div className="w-full max-h-screen overflow-auto">
+      <div className="w-full lg:max-h-screen lg:overflow-auto">
         {/* posts */}
         {contentState.showPosts && (
-          <Posts handleCreate={() => contentDispatcher({ type: "CREATE" })} />
+          <Posts handleCreate={handleCreate} handlePosts={handlePosts} />
         )}
         {/* update profile */}
-        {contentState.showUpdate && <UpdateProfile />}
+        {contentState.showChangePassword && <ChangePassword />}
         {/* create post */}
-        {contentState.showCreate && <CreatePost />}
+        {contentState.showCreate && <CreatePost handlePosts={handlePosts} />}
       </div>
     </div>
   );

@@ -4,12 +4,21 @@ import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import Input from "../../ui/Input";
 import useValidate from "../../hooks/useValidate";
+import PasswordInput from "../../ui/PasswordInput";
 
 const Signup = () => {
   const authCtx = useContext(AuthContext);
 
   const [email, onEmailChange, onEmailBlur] = useValidate(
     (value) => value.includes("@"),
+    {
+      value: "",
+      isValid: null,
+    }
+  );
+
+  const [name, onNameChange, onNameBlur] = useValidate(
+    (value) => value.trim().length > 3,
     {
       value: "",
       isValid: null,
@@ -51,6 +60,7 @@ const Signup = () => {
     console.log(formIsValid, "form");
     if (formIsValid) {
       authCtx.signup({
+        name: name.value,
         email: email.value,
         password: password.value,
       });
@@ -71,6 +81,18 @@ const Signup = () => {
           <h2 className="text-4xl">Sign Up</h2>
 
           <Input
+            id="name"
+            type="text"
+            placeholder="Your Name"
+            className={`input input-bordered focus:outline-none  ${
+              name.isValid === false ? " input-error" : ""
+            }`}
+            value={name.value}
+            onChange={onNameChange}
+            onBlur={onNameBlur}
+            label="Your Name"
+          />
+          <Input
             id="email"
             type="email"
             placeholder="email"
@@ -82,25 +104,19 @@ const Signup = () => {
             onBlur={onEmailBlur}
             label="Email"
           />
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             placeholder="password"
-            className={`input input-bordered focus:outline-none  ${
-              password.isValid === false ? " input-error" : ""
-            }`}
+            error={password.isValid === false ? " input-error" : ""}
             value={password.value}
             onChange={onPasswordChange}
             onBlur={onPasswordBlur}
             label="Password"
           />
-          <Input
+          <PasswordInput
             id="confirm"
-            type="password"
             placeholder="confirm password"
-            className={`input input-bordered focus:outline-none  ${
-              confirm.isValid === false ? " input-error" : ""
-            }`}
+            error={confirm.isValid === false ? " input-error" : ""}
             value={confirm.value}
             onChange={(e) => {
               setConfirm({

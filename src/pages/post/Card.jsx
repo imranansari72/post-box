@@ -1,5 +1,6 @@
 import React from "react";
 import Avatar from "../../ui/Avatar";
+import DeleteModal from "./DeleteModal";
 
 const Card = ({
   id,
@@ -11,9 +12,31 @@ const Card = ({
   onClickEdit,
   onClickDelete,
 }) => {
+  const [confirmDelete, setConfirmDelete] = React.useState(false);
+
   const onDeleteHandler = () => {
     onClickDelete(id);
   };
+
+  const confirmDeleteHandler = () => {
+    setConfirmDelete(true);
+  };
+
+  const onEditHandler = () => {
+    onClickEdit({ id, img, title, caption });
+  };
+
+  if (confirmDelete) {
+    return (
+      <DeleteModal
+        onConfirm={onDeleteHandler}
+        onCancel={() => {
+          setConfirmDelete(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
       <div className=" flex space-x-5 text-lg p-4">
@@ -31,10 +54,10 @@ const Card = ({
         <p className="text-sm">{caption}</p>
         {isOwner && (
           <div className="card-actions">
-            <button className=" btn btn-primary" onClick={onClickEdit}>
+            <button className=" btn btn-primary" onClick={onEditHandler}>
               Edit
             </button>
-            <button className="btn btn-ghost" onClick={onDeleteHandler}>
+            <button className="btn btn-ghost" onClick={confirmDeleteHandler}>
               Delete
             </button>
           </div>
