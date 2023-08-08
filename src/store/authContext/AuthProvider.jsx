@@ -1,42 +1,28 @@
 import AuthContext from "./AuthContext";
 import React, { useReducer, useEffect } from "react";
 import { users } from "../data";
+import axios from "axios";
 
 const initialState = {
-  userId: null,
-  error: false,
+  user: null,
   isAuthenticated: false,
 };
 
 const userReducer = (state, action) => {
   if (action.type === "LOGIN") {
-    const user = users.filter((user) => {
-      return (
-        user.email === action.payload.email &&
-        user.password === action.payload.password
-      );
-    });
-
-    if (user.length === 0) {
-      return {
-        ...state,
-        userId: null,
-        error: true,
-        isAuthenticated: false,
-      };
-    }
-
     return {
-      userId: user[0].id,
-      error: false,
+      ...state,
+      user: action.payload,
       isAuthenticated: true,
     };
   }
 
   if (action.type === "LOGOUT") {
+    // crear cookie
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     return {
       ...state,
-      userId: null,
+      user: null,
       isAuthenticated: false,
     };
   }
@@ -61,25 +47,42 @@ const userReducer = (state, action) => {
 
 const AuthProvider = (props) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
+  const [error, setError] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
 
-  const login = (email, password) => {
+  const login = async (user) => {
     dispatch({
       type: "LOGIN",
-      payload: { email, password },
+      payload: user,
     });
   };
 
   const logout = () => {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     dispatch({
       type: "LOGOUT",
     });
   };
 
-  const signup = (user) => {
-    dispatch({
-      type: "SIGNUP",
-      payload: user,
+  const signup = async (user) => {
+    //signup user from api
+    const res = await axios.post(
+      process.env.REACT_APP_BASE_URL + "/auth/signup",
+      {
+        ...user,
+      }
+    );
+    return new Promise((resolve, reject) => {
+      if (res.data.success) {
+        dispatch({
+          type: "SIGNUP",
+          payload: res.data.user,
+        });
+        resolve(res.data.user);
+      } else {
+        setError(true);
+        reject(res.data.message);
+      }
     });
   };
 
@@ -103,10 +106,8 @@ const AuthProvider = (props) => {
   return (
     <AuthContext.Provider
       value={{
-        userId: state.userId,
-        isAuthenticated: state.isAuthenticated,
-        error: state.error,
-        isMobile,
+        ...state,
+        error,
         login,
         logout,
         signup,

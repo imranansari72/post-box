@@ -1,6 +1,7 @@
 import React from "react";
 
 const BoxAlert = (props) => {
+  
   return (
     // <div className="alert alert-error p-0 rounded-sm">
     //   <div className="flex-1">

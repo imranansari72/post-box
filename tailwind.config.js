@@ -2,7 +2,13 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      
+      // bg image
+      backgroundImage: (theme) => ({
+        "hero-pattern": "url('/src/assets/images/hero-line.svg')",
+      }),
+    },
   },
   daisyui: {
     themes: [

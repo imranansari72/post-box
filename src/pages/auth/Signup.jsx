@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import AuthContext from "../../store/authContext/AuthContext";
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Input from "../../ui/Input";
 import useValidate from "../../hooks/useValidate";
 import PasswordInput from "../../ui/PasswordInput";
+import Loading from "../../ui/Loading";
 
 const Signup = () => {
   const authCtx = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const [email, onEmailChange, onEmailBlur] = useValidate(
     (value) => value.includes("@"),
@@ -40,6 +43,8 @@ const Signup = () => {
 
   const [formIsValid, setFormIsValid] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const identifier = setTimeout(() => {
       console.log(
@@ -59,16 +64,26 @@ const Signup = () => {
     console.log("in sifnup handler");
     console.log(formIsValid, "form");
     if (formIsValid) {
-      authCtx.signup({
-        name: name.value,
-        email: email.value,
-        password: password.value,
-      });
+      setLoading(true);
+      authCtx
+        .signup({
+          name: name.value,
+          email: email.value,
+          password: password.value,
+        })
+        .then((res) => {
+          console.log(res);
+          navigate("/home");
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
-  if (authCtx.isAuthenticated) {
-    return <Navigate to={`/feed`} />;
+  if (loading) {
+    return <Loading />;
   }
 
   return (

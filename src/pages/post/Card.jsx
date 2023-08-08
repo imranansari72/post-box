@@ -1,21 +1,20 @@
 import React from "react";
 import Avatar from "../../ui/Avatar";
 import DeleteModal from "./DeleteModal";
+import useAuth from "../../hooks/useAuth";
+import { AiOutlineHeart } from "react-icons/ai";
+import { FaRegComment } from "react-icons/fa";
+import { BsThreeDots } from "react-icons/bs";
+import PostAction from "./PostAction";
 
-const Card = ({
-  id,
-  img,
-  title,
-  caption,
-  userName,
-  isOwner,
-  onClickEdit,
-  onClickDelete,
-}) => {
+const Card = ({ post, isOwner, onClickEdit, onClickDelete }) => {
+
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
+  const { user } = useAuth();
+
   const onDeleteHandler = () => {
-    onClickDelete(id);
+    onClickDelete(post._id);
   };
 
   const confirmDeleteHandler = () => {
@@ -23,7 +22,7 @@ const Card = ({
   };
 
   const onEditHandler = () => {
-    onClickEdit({ id, img, title, caption });
+    onClickEdit({ ...post });
   };
 
   if (confirmDelete) {
@@ -38,20 +37,33 @@ const Card = ({
   }
 
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
-      <div className=" flex space-x-5 text-lg p-4">
-        <Avatar size={"6"} />
-        <div className="">{userName}</div>
+    <div className="flex flex-col m-2 p-4 bg-base-100 rounded w-[90%] shadow-md">
+      <div className="flex border-b pb-2 border-gray-200">
+        <Avatar
+          img={user?.profilePicture}
+          firstAlpha={user?.name[0]}
+          size={12}
+        />
+        <div className="pl-4 flex justify-between w-full items-center">
+          <h2 className="text-lg font-bold">{user?.name}</h2>
+          <button className="text-sm text-gray-500">
+            <PostAction onDelete={confirmDeleteHandler} onEdit={onEditHandler} />
+          </button>
+        </div>
       </div>
-      {img !== undefined && (
-        <figure>
-          <img src={URL.createObjectURL(img)} alt="Post" width={`384px`} />
-        </figure>
-      )}
-      <div className="card-body">
-        <div className="flex space-x-2"></div>
-        <h2 className="card-title text-lg">{title}</h2>
-        <p className="text-sm">{caption}</p>
+      <div className="pt-2 text-left text-sm">
+        <h2>{post.desc}</h2>
+      </div>
+      <div>img</div>
+      <div className=" card-actions">
+        <button className="bg-transparent">
+          <AiOutlineHeart size={20} />
+        </button>
+        <button className="bg-transparent">
+          <FaRegComment size={20} />
+        </button>
+      </div>
+      {/* <div className="card-body">
         {isOwner && (
           <div className="card-actions">
             <button className=" btn btn-primary" onClick={onEditHandler}>
@@ -62,7 +74,7 @@ const Card = ({
             </button>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import AuthContext from "../../store/authContext/AuthContext";
-import UserContext from "../../store/userContext/UserContext";
+import UserContext from "../../store/usersContext/UsersContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import Card from "./Card";

@@ -1,10 +1,13 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, NavLink } from "react-router-dom";
 import AuthContext from "../store/authContext/AuthContext";
 import { useContext, useState, useEffect } from "react";
+import useAuth from "../hooks/useAuth";
 
 const Navbar = (props) => {
-  const authCtx = useContext(AuthContext);
+  // const { state, logout } = useContext(AuthContext);
+  const { user, isAuthenticated, logout } = useAuth();
+  console.log("in anvbar authCtx", user, isAuthenticated);
 
   return (
     <div className="drawer">
@@ -35,21 +38,23 @@ const Navbar = (props) => {
           <div className="flex-none hidden lg:block">
             <ul className="menu menu-horizontal space-x-4 text-lg">
               {/* Navbar menu content here */}
-              <li>{authCtx.isAuthenticated && <Link to={"/home"}>Home</Link>}</li>
               <li>
-                {authCtx.isAuthenticated ? (
-                  <Link to={"/profile"}>Profile</Link>
+                <Link to={"/"}>Home</Link>
+              </li>
+              <li>
+                {isAuthenticated ? (
+                  <NavLink to={"/profile"}>Profile</NavLink>
                 ) : (
-                  <Link to={"/login"}>Login</Link>
+                  <NavLink to={"/login"}>Login</NavLink>
                 )}
               </li>
               <li>
-                {authCtx.isAuthenticated ? (
-                  <Link to={"/"} onClick={authCtx.logout}>
+                {isAuthenticated ? (
+                  <NavLink to={"/"} onClick={logout}>
                     Logout
-                  </Link>
+                  </NavLink>
                 ) : (
-                  <Link to={"/signup"}>Signup</Link>
+                  <NavLink to={"/signup"}>Signup</NavLink>
                 )}
               </li>
             </ul>
@@ -62,21 +67,21 @@ const Navbar = (props) => {
         <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
         <ul className="menu p-4 w-80 h-full bg-base-200">
           {/* Sidebar content here */}
-          {authCtx.isAuthenticated ? (
+          {isAuthenticated ? (
             <>
               <li>
                 {" "}
-                <Link to={"/home"}>Home</Link>
+                <NavLink to={"/home"}>Home</NavLink>
               </li>
               <li>
                 {" "}
-                <Link to={"/profile"}>Profile</Link>
+                <NavLink to={"/profile"}>Profile</NavLink>
               </li>
               <li>
                 {" "}
-                <Link to={"/"} onClick={authCtx.logout}>
+                <NavLink to={"/"} onClick={logout}>
                   Logout
-                </Link>
+                </NavLink>
               </li>
             </>
           ) : (

@@ -23,22 +23,12 @@ const PostForm = (props) => {
         )}
 
         <Input
-          id="title"
-          type="title"
-          placeholder="Title"
-          className="input input-bordered"
-          label="Title"
-          value={inputState.title}
-          onChange={inputHandler}
-        />
-
-        <Input
-          id="caption"
-          type="caption"
-          placeholder="Caption"
+          id="desc"
+          type="text"
+          placeholder="Description"
           className="input input-bordered"
           label="Caption"
-          value={inputState.caption}
+          value={inputState.desc}
           onChange={inputHandler}
         />
         <button type="submit" className="btn btn-primary">

@@ -2,16 +2,11 @@ import React from "react";
 
 const Toast = (props) => {
   return (
-    <>
-      {(
-        <div className="toast toast-top toast-end z-10">
-          <div className={`alert alert-${props.type}`}>
-            <span>{props.message}</span>
-          </div>
-        </div>
-      )}
-    </>
-
+    <div className="toast  toast-top toast-end z-10">
+      <div className={`alert rounded-md alert-${props.type}`}>
+        <span>{props.message}</span>
+      </div>
+    </div>
     // <div className="toast toast-top toast-end">
     //   <div className="alert alert-success">
     //     <span>{props.message}</span>

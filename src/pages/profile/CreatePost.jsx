@@ -1,29 +1,31 @@
 import React, { useContext, useEffect } from "react";
-import UserContext from "../../store/userContext/UserContext";
+import UserContext from "../../store/postsContext/PostsContext";
 import Toast from "../../ui/Toast";
 import PostForm from "./PostForm";
 import Loading from "../../ui/Loading";
+import useAuth from "../../hooks/useAuth";
+import usePosts from "../../hooks/usePosts";
 
 
 const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
-  const userCtx = useContext(UserContext);
+
+  const { user } = useAuth();
+  const { editPost, createPost } = usePosts();
+
   const [inputState, setInputState] = React.useState({
     img: null,
-    title: "",
-    caption: "",
+    desc: "",
   });
-
-  const id = post?.id;
 
   useEffect(() => {
     if (titleOfPage !== undefined) {
       setInputState({
         img: post.img,
-        title: post.title,
-        caption: post.caption,
+        desc: post.desc,
       });
     }
   }, []);
+
   const [newPostAdded, setNewPostAdded] = React.useState(false);
   const [error, setError] = React.useState(null);
 
@@ -48,18 +50,17 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const { img, title, caption } = inputState;
-    if (img && title) {
+    const { img, desc } = inputState;
+    if (img && desc) {
       // userCtx.createPost(title, caption, img);
       setInputState({
         img: null,
-        title: "",
-        caption: "",
+        desc: "",
       });
       if (titleOfPage !== undefined) {
-        userCtx.editPost(id, title, caption, img);
+        editPost(desc, img, post._id );
       } else {
-        userCtx.createPost(title, caption, img);
+        createPost(desc, img);
       }
       setNewPostAdded(true);
       setTimeout(() => {
@@ -74,11 +75,11 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
       }, 1000);
     } else {
       setError(() => {
-        if (!inputState.img && !inputState.title) {
+        if (!inputState.img && !inputState.desc) {
           return "Please select an image and enter a title";
         } else if (!inputState.img) {
           return "Please select an image";
-        } else if (!inputState.title) {
+        } else if (!inputState.desc) {
           return "Please enter a title";
         }
       });
