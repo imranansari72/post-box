@@ -6,7 +6,7 @@ module.exports = {
       
       // bg image
       backgroundImage: (theme) => ({
-        "hero-pattern": "url('/src/assets/images/hero-line.svg')",
+        "hero-pattern": "url('/src/assets/images/Rect Light.svg')",
       }),
     },
   },

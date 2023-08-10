@@ -1,11 +1,15 @@
 import React from "react";
-import { useState, useReducer } from "react";
+import { useState, useReducer, memo } from "react";
 import Left from "./Left";
 import Posts from "./MyPosts";
 // import CreatePost from "./CreatePost";
 // import ChangePassword from "./ChangePassword";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import MainProfile from "./MainProfile";
+import useAuth from "../../hooks/useAuth";
+import MyPosts from "./MyPosts";
+import Friends from "./Friends";
+import SavedPosts from "./SavedPosts";
 
 const contentReducer = (state, action) => {
   switch (action.type) {
@@ -70,12 +74,58 @@ const Profile = () => {
   //   </div>
   // );
 
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const [showState, setShowState] = useState({
+    showPosts: true,
+    showSavedPosts: false,
+    showFriends: false,
+  });
+
+  const { showPosts, showSavedPosts, showFriends } = showState;
+
+  const handlePosts = () => {
+    setShowState({
+      showPosts: true,
+      showSavedPosts: false,
+      showFriends: false,
+    });
+  };
+
+  const handleSavedPosts = () => {
+    setShowState({
+      showPosts: false,
+      showSavedPosts: true,
+      showFriends: false,
+    });
+  };
+
+  const handleFriends = () => {
+    setShowState({
+      showPosts: false,
+      showSavedPosts: false,
+      showFriends: true,
+    });
+  };
+
+  if (!isAuthenticated) {
+    navigate("/login");
+  }
+
   return (
     <>
-      <MainProfile />
-      <Outlet />
+      <MainProfile
+        handlePosts={handlePosts}
+        handleSavedPosts={handleSavedPosts}
+        handleFriends={handleFriends}
+        {...showState}
+      />
+      {showPosts && <MyPosts />}
+      {showSavedPosts && <SavedPosts />}
+      {showFriends && <Friends />}
     </>
   );
 };
 
-export default Profile;
+export default memo(Profile);

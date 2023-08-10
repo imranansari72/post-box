@@ -8,13 +8,13 @@ import { BsThreeDots } from "react-icons/bs";
 import PostAction from "./PostAction";
 
 const Card = ({ post, isOwner, onClickEdit, onClickDelete }) => {
-
   const [confirmDelete, setConfirmDelete] = React.useState(false);
 
   const { user } = useAuth();
 
   const onDeleteHandler = () => {
     onClickDelete(post._id);
+    setConfirmDelete(false);
   };
 
   const confirmDeleteHandler = () => {
@@ -42,26 +42,41 @@ const Card = ({ post, isOwner, onClickEdit, onClickDelete }) => {
         <Avatar
           img={user?.profilePicture}
           firstAlpha={user?.name[0]}
-          size={12}
+          size={8}
         />
         <div className="pl-4 flex justify-between w-full items-center">
           <h2 className="text-lg font-bold">{user?.name}</h2>
-          <button className="text-sm text-gray-500">
-            <PostAction onDelete={confirmDeleteHandler} onEdit={onEditHandler} />
-          </button>
+          {isOwner && (
+            <button className="text-sm text-gray-500">
+              <PostAction
+                onDelete={confirmDeleteHandler}
+                onEdit={onEditHandler}
+              />
+            </button>
+          )}
         </div>
       </div>
       <div className="pt-2 text-left text-sm">
         <h2>{post.desc}</h2>
       </div>
-      <div>img</div>
-      <div className=" card-actions">
+      <div className="pt-4">
+        <img
+          src={`data:image/png;base64,${window.Buffer.from(post.img.data).toString(
+            "base64"
+          )}`}
+          alt="post"
+        />
+      </div>
+      <div className=" card-actions pt-4">
         <button className="bg-transparent">
           <AiOutlineHeart size={20} />
         </button>
         <button className="bg-transparent">
           <FaRegComment size={20} />
         </button>
+      </div>
+      <div>
+        comments
       </div>
       {/* <div className="card-body">
         {isOwner && (

@@ -17,74 +17,35 @@ const userReducer = (state, action) => {
   }
 
   if (action.type === "CREATE_POST") {
-    // update in backend
-    axios
-      .post(process.env.REACT_APP_BASE_URL + "/posts/create", {
-        userId: state.user._id,
-        desc: action.payload.desc,
-        img: action.payload.img,
-      })
-      .then((res) => {
-        if (res.success) {
-          state.user.posts.push(res.data);
-        } else {
-          console.log(res.error);
-          state.error = res.error;
-        }
-      });
+    const newPost = action.payload;
+    state.posts.unshift(newPost);
     return {
-      user: state.user,
+      posts: state.posts,
       error: state.error,
     };
   }
 
   if (action.type === "DELETE_POST") {
-    const deletedPostIndex = state.user.posts.findIndex(
-      (post) => post.id == action.payload
+    const deletedPostIndex = state.posts.findIndex(
+      (post) => post._id == action.payload
     );
-    //delete in backend
-    axios
-      .delete(process.env.REACT_APP_BASE_URL + "/posts/" + action.payload)
-      .then((res) => {
-        if (res.success) {
-          state.user.posts.splice(deletedPostIndex, 1);
-        } else {
-          console.log(res.error);
-          state.error = res.error;
-        }
-      });
-
+    console.log("deletedPostIndex", deletedPostIndex)
+    state.posts.splice(deletedPostIndex, 1);
+    console.log("after deletetion -> ", state.posts)
     return {
-      user: state.user,
+      posts: state.posts,
+      error: state.error,
     };
   }
-  
+
   if (action.type === "EDIT_POST") {
-    const editedPostIndex = state.user.posts.findIndex(
+    const editedPostIndex = state.posts.findIndex(
       (post) => post._id == action.payload._id
     );
-    //edit in backend
-    axios
-      .put(
-        process.env.REACT_APP_BASE_URL +
-          "/posts/update/" +
-          action.payload.postId,
-        {
-          desc: action.payload.desc,
-          img: action.payload.img,
-        }
-      )
-      .then((res) => {
-        if (res.success) {
-          state.user.posts[editedPostIndex].desc = res.data.desc;
-          state.user.posts[editedPostIndex].img = res.data.img;
-        } else {
-          console.log(res.error);
-          state.error = res.error;
-        }
-      });
+    state.posts[editedPostIndex] = action.payload;
     return {
-      user: state.user,
+      posts: state.posts,
+      error: state.error,
     };
   }
 };
@@ -95,15 +56,30 @@ const PostsProvider = (props) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
   const deletePostHandler = (postId) => {
-    dispatch({ type: "DELETE_POST", payload: postId });
+    //fist delete in back end and then delete in front end
+    axios
+      .delete(process.env.REACT_APP_BASE_URL + "/posts/delete/" + postId, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.data.success) {
+          dispatch({ type: "DELETE_POST", payload: postId });
+        } else {
+          console.log(res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const editPostHandler = (desc, img, _id) => {
-    dispatch({ type: "EDIT_POST", payload: { img, desc, _id } });
+  const editPostHandler = (post) => {
+    dispatch({ type: "EDIT_POST", payload: post });
   };
 
-  const createPostHandler = ( img, desc ) => {
-    dispatch({ type: "CREATE_POST", payload: { img, desc } });
+  const createPostHandler = (post) => {
+    dispatch({ type: "CREATE_POST", payload: post });
   };
 
   useEffect(() => {

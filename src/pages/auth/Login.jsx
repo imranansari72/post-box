@@ -52,8 +52,12 @@ const Login = () => {
           {
             email: email.value,
             password: password.value,
+          },
+          {
+            withCredentials: true,
           }
         );
+        console.log('user from backend',res.data);
         authCtx.login(res.data.user);
         navigate("/", { replace: true });
         setLoading(false);
@@ -89,7 +93,7 @@ const Login = () => {
         {error && <Toast message={error} type={"error"} />}
         <div className="hero-content flex-col lg:flex-row px-20">
           <div className=" text-center lg:text-left">
-            <h1 className="font-extrabold text-transparent text-6xl pb-4 bg-clip-text bg-gradient-to-r from-blue-500 to-green-500">
+            <h1 className="font-extrabold text-transparent text-6xl pb-4 bg-clip-text bg-gradient-to-r from-gray-100 to-gray-200">
               Login now!
             </h1>
             <p className="py-6">
@@ -154,3 +158,5 @@ const Login = () => {
 };
 
 export default Login;
+
+

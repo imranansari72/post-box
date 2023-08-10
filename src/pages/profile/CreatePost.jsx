@@ -5,12 +5,13 @@ import PostForm from "./PostForm";
 import Loading from "../../ui/Loading";
 import useAuth from "../../hooks/useAuth";
 import usePosts from "../../hooks/usePosts";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-
-const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
-
+const CreatePost = ({ titleOfPage, post, onEdit }) => {
   const { user } = useAuth();
   const { editPost, createPost } = usePosts();
+  const navigate = useNavigate();
 
   const [inputState, setInputState] = React.useState({
     img: null,
@@ -20,7 +21,10 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
   useEffect(() => {
     if (titleOfPage !== undefined) {
       setInputState({
-        img: post.img,
+        img: {
+          data: post.img.data,
+          contentType: post.img.contentType,
+        },
         desc: post.desc,
       });
     }
@@ -31,6 +35,9 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
 
   const inputHandler = (e) => {
     const { id, value } = e.target;
+    if (id === "img") {
+      console.log(e.target.files[0]);
+    }
     setInputState((prevState) => {
       return {
         ...prevState,
@@ -57,22 +64,42 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
         img: null,
         desc: "",
       });
-      if (titleOfPage !== undefined) {
-        editPost(desc, img, post._id );
-      } else {
-        createPost(desc, img);
-      }
-      setNewPostAdded(true);
-      setTimeout(() => {
-        if (titleOfPage !== undefined) {
-          // Resetin the edit mode
-          onEdit();
-        } else {
-          // Navigae to posts page
-          handlePosts();
-        }
-        setNewPostAdded(false);
-      }, 1000);
+
+      const formData = new FormData();
+      formData.append("desc", desc);
+      formData.append("img", img);
+
+      axios({
+        method: titleOfPage !== undefined ? "put" : "post",
+        url:
+          titleOfPage !== undefined
+            ? process.env.REACT_APP_BASE_URL + "/posts/update/" + post._id
+            : process.env.REACT_APP_BASE_URL + "/posts/create",
+        data: formData,
+        withCredentials: true,
+      })
+        .then((res) => {
+          console.log(res);
+          if (titleOfPage !== undefined) {
+            editPost(res.data.data);
+          } else {
+            createPost(res.data.data);
+          }
+          setNewPostAdded(true);
+          setTimeout(() => {
+            if (titleOfPage !== undefined) {
+              // Resetin the edit mode
+              onEdit();
+            } else {
+              // Navigae to posts page
+              navigate("/profile/posts");
+            }
+            setNewPostAdded(false);
+          }, 1000);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
       setError(() => {
         if (!inputState.img && !inputState.desc) {
@@ -104,8 +131,8 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center my-10 w-full">
-      <h1 className="text-4xl my-4">
+    <div className="flex flex-col items-center justify-center my-10">
+      <h1 className="text-4xl my-4 w-full">
         {titleOfPage !== undefined ? titleOfPage : "Create Post"}
       </h1>
       <PostForm
@@ -113,7 +140,13 @@ const CreatePost = ({ titleOfPage, post, onEdit, handlePosts }) => {
         inputState={inputState}
         inputHandler={inputHandler}
         onImageDelete={onImageDelete}
-        handleCancel={titleOfPage !== undefined ? onEdit : handlePosts}
+        handleCancel={
+          titleOfPage !== undefined
+            ? onEdit
+            : () => {
+                navigate("/profile/posts");
+              }
+        }
       />
       {newPostAdded && (
         <Toast

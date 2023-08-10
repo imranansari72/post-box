@@ -3,17 +3,29 @@ import Input from "../../ui/Input";
 import InputImage from "../../ui/InputImage";
 
 const PostForm = (props) => {
-  const { submitHandler, inputState, inputHandler, onImageDelete, handleCancel } = props;
+  const {
+    submitHandler,
+    inputState,
+    inputHandler,
+    onImageDelete,
+    handleCancel,
+  } = props;
 
   return (
     <form
-      className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100"
+      className="card w-[100%] max-w-sm shadow-lg bg-base-100"
       onSubmit={submitHandler}
     >
       <div className="card-body py-4">
         {inputState.img ? (
           <div className="flex flex-col space-y-2">
-            <img src={URL.createObjectURL(inputState.img)} alt="" />
+            <img
+              // src={`data:image/png;base64,${window.Buffer.from(
+              //   inputState.img.data
+              // ).toString("base64")}`}
+              src={URL.createObjectURL(inputState.img)}
+              alt=""
+            />
             <button className="btn" onClick={onImageDelete}>
               Delete
             </button>

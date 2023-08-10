@@ -1,7 +1,7 @@
 import AuthContext from "./AuthContext";
 import React, { useReducer, useEffect } from "react";
-import { users } from "../data";
 import axios from "axios";
+import { type } from "@testing-library/user-event/dist/type";
 
 const initialState = {
   user: null,
@@ -20,6 +20,16 @@ const userReducer = (state, action) => {
   if (action.type === "LOGOUT") {
     // crear cookie
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    axios
+      .get(process.env.REACT_APP_BASE_URL + "/auth/logout", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     return {
       ...state,
       user: null,
@@ -29,18 +39,27 @@ const userReducer = (state, action) => {
 
   if (action.type == "SIGNUP") {
     console.log(action.payload);
-    users.push({
-      id: users.length + 1,
-      email: action.payload.email,
-      name: action.payload.name,
-      password: action.payload.password,
-      posts: [],
-    });
-    console.log(users, "users");
+    return {
+      user: action.payload,
+      isAuthenticated: true,
+    };
+  }
+
+  if (action.type === "UPDATE_USER") {
+    console.log("in UPDATE_USER reducer : ", action.payload);
     return {
       ...state,
-      userId: users[users.length - 1].id,
-      isAuthenticated: true,
+      user: action.payload,
+    };
+  }
+
+  if (type === "UPDATE_USER_NAME") {
+    return {
+      ...state,
+      user: {
+        ...state.user,
+        name: action.payload,
+      },
     };
   }
 };
@@ -86,6 +105,23 @@ const AuthProvider = (props) => {
     });
   };
 
+  const updateUser = (user) => {
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: "UPDATE_USER",
+        payload: user,
+      });
+      resolve(user);
+    });
+  };
+
+  const updateuserName = (name) => {
+    dispatch({
+      type: "UPDATE_USER_NAME",
+      payload: name,
+    });
+  };
+
   useEffect(() => {
     const handleWindowResize = () => {
       if (window.innerWidth < 1024) {
@@ -103,6 +139,31 @@ const AuthProvider = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("in auth provider");
+    console.log(window.cookie);
+    axios
+      .get(process.env.REACT_APP_BASE_URL + "/auth/checkAuth", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log("in useEffect login showinf res", res.data.user);
+        if (res.data.success) {
+          dispatch({
+            type: "LOGIN",
+            payload: res.data.user,
+          });
+        } else {
+          dispatch({
+            type: "LOGOUT",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -111,6 +172,7 @@ const AuthProvider = (props) => {
         login,
         logout,
         signup,
+        updateUser,
       }}
     >
       {props.children}

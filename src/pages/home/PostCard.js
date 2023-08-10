@@ -4,7 +4,9 @@ import Avatar from "../../ui/Avatar";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 
-const PostCard = ({ desc, img, liks, comments, userId }) => {
+const PostCard = ({post}) => {
+  const { desc, img, userId } = post;
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,19 +45,24 @@ const PostCard = ({ desc, img, liks, comments, userId }) => {
       <div className="pt-2 text-left text-sm">
         <h2>{desc}</h2>
       </div>
-      <div>
+      <div className="pt-4">
         <img
-          src={`data:image/png;base64,${window.Buffer.from(img).toString("base64")}`}
+          src={`data:image/png;base64,${window.Buffer.from(img.data).toString(
+            "base64"
+          )}`}
           alt="post"
         />
       </div>
-      <div className=" card-actions">
+      <div className=" card-actions pt-4">
         <button className="bg-transparent">
           <AiOutlineHeart size={20} />
         </button>
         <button className="bg-transparent">
           <FaRegComment size={20} />
         </button>
+      </div>
+      <div>
+        comment
       </div>
     </div>
   );

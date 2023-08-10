@@ -13,9 +13,9 @@ import Posts from "./pages/home/Posts";
 import MyPosts from "./pages/profile/MyPosts";
 import SavedPosts from "./pages/profile/SavedPosts";
 import Friends from "./pages/profile/Friends";
+import CreatePost from "./pages/profile/CreatePost";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
-
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -34,6 +34,7 @@ function App() {
             <Route path="/" element={<Home />}>
               <Route path="/" element={<Posts />} />
               <Route path="/profile" element={<Profile />}>
+                <Route path="/profile/" element={<MyPosts />} />
                 <Route path="/profile/posts" element={<MyPosts />} />
                 <Route path="/profile/savedposts" element={<SavedPosts />} />
                 <Route path="/profile/friends" element={<Friends />} />

@@ -3,11 +3,17 @@ import { Link, NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Avatar from "../../ui/Avatar";
 import { useNavigate } from "react-router-dom";
+import { AiFillHome } from "react-icons/ai";
+import { BsFillPersonFill } from "react-icons/bs";
 
 const HomeProfile = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
-  console.log(user, isAuthenticated);
+
+  const commonClasses = "flex gap-2 justify-center text-gray-500 w-1/2 rounded py-1";
+  const activeClasses =
+    " bg-primary scale-110 transform duration-200 text-gray-900";
+
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col items-center gap-4">
@@ -24,9 +30,10 @@ const HomeProfile = () => {
       </div>
     );
   }
+
   return (
     <div className="flex flex-col gap-4 p-4">
-      <div className="flex space-x-4 items-center border-b-4 pb-4">
+      <div className="flex space-x-4 items-center border-b-4 border-gray-600 pb-4">
         <div>
           <Avatar
             img={user?.profilePicture}
@@ -43,41 +50,28 @@ const HomeProfile = () => {
         <NavLink
           to="/"
           className={({ isActive }) => {
-            const commonClasses = "text-gray-500 w-1/2 rounded py-1";
-            const activeClasses =
-              " bg-primary scale-110 transform duration-200 text-black";
             return isActive
               ? activeClasses + " " + commonClasses
               : commonClasses;
           }}
         >
+          <span>
+            <AiFillHome size={24} />
+          </span>
           Home
         </NavLink>
         <NavLink
           to="/profile"
           className={({ isActive }) => {
-            const commonClasses = "text-gray-500 w-1/2 rounded py-1";
-            const activeClasses =
-              " bg-primary scale-110 transform duration-200 text-black";
             return isActive
               ? activeClasses + " " + commonClasses
               : commonClasses;
           }}
         >
+          <span>
+            <BsFillPersonFill size={24} />
+          </span>
           Profile
-        </NavLink>
-        <NavLink
-          to="/newpost"
-          className={({ isActive }) => {
-            const commonClasses = "text-gray-500 w-1/2 rounded py-1";
-            const activeClasses =
-              " bg-primary scale-110 transform duration-200 text-black";
-            return isActive
-              ? activeClasses + " " + commonClasses
-              : commonClasses;
-          }}
-        >
-          New Post
         </NavLink>
       </div>
     </div>
