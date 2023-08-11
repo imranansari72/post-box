@@ -3,9 +3,11 @@ import useAuth from "../../hooks/useAuth";
 import { AiOutlineEdit } from "react-icons/ai";
 import { CiSaveUp2 } from "react-icons/ci";
 import axios from "axios";
+import useUi from "../../hooks/useUi";
 
 const UserName = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUserName } = useAuth();
+  const { setTimedToast } = useUi();
 
   const [toggleNameEdit, setToggleNameEdit] = useState(false);
 
@@ -27,13 +29,17 @@ const UserName = () => {
       .then((res) => {
         console.log("response by api update unername : ", res);
         if (res.data.success) {
-          updateUser(res.data.data).then((res) => {
-            console.log("responce by front end context : ", res);
-            setLoading(false);
+          updateUserName(res.data.data.name).then((res) => {
+            console.log("response by update username : ", res);
+            setTimedToast("success", "Your name updated successfully.");
+            setTimeout(() => {
+              setLoading(false);
+            }, 1000);
           });
           setToggleNameEdit(false);
         } else {
           console.log("error in update username : ", res.data.message);
+          setLoading(false);
         }
       })
       .catch((err) => {
@@ -70,7 +76,7 @@ const UserName = () => {
             />
           </div>
         ) : (
-          <h1 className="text-lg font-bold">{user?.name}</h1>
+          <h1 className="text-lg font-bold">{name}</h1>
         )}
         <h2 className="text-sm text-gray-500 pt-1">{user.email}</h2>
       </div>

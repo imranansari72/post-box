@@ -1,7 +1,6 @@
 import AuthContext from "./AuthContext";
 import React, { useReducer, useEffect } from "react";
 import axios from "axios";
-import { type } from "@testing-library/user-event/dist/type";
 
 const initialState = {
   user: null,
@@ -53,7 +52,8 @@ const userReducer = (state, action) => {
     };
   }
 
-  if (type === "UPDATE_USER_NAME") {
+  if (action.type === "UPDATE_USER_NAME") {
+    console.log("in UPDATE_USER_NAME reducer : ", action.payload);
     return {
       ...state,
       user: {
@@ -115,10 +115,29 @@ const AuthProvider = (props) => {
     });
   };
 
-  const updateuserName = (name) => {
+  const updateUserName = (name) => {
+    console.log("in updateUserName : ", name);
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: "UPDATE_USER_NAME",
+        payload: name,
+      });
+      console.log("after dispatch", state.user);
+      resolve(name);
+    });
+  };
+
+  const updateUserProfilePicture = (profilePicture) => {
     dispatch({
-      type: "UPDATE_USER_NAME",
-      payload: name,
+      type: "UPDATE_USER_PROFILE_PICTURE",
+      payload: profilePicture,
+    });
+  };
+
+  const updateUserCoverPhoto = (coverPicture) => {
+    dispatch({
+      type: "UPDATE_USER_COVER_PHOTO",
+      payload: coverPicture,
     });
   };
 
@@ -173,6 +192,9 @@ const AuthProvider = (props) => {
         logout,
         signup,
         updateUser,
+        updateUserName,
+        updateUserProfilePicture,
+        updateUserCoverPhoto,
       }}
     >
       {props.children}

@@ -1,11 +1,14 @@
 import React from "react";
 import AuthProvider from "./authContext/AuthProvider";
 import PostsProvider from "./postsContext/PostsProvider";
+import UiContextProvider from "./uiContext/UiContextProvider";
 
 const ContextProvider = (props) => {
   return (
     <AuthProvider>
-      <PostsProvider>{props.children}</PostsProvider>
+      <PostsProvider>
+        <UiContextProvider>{props.children}</UiContextProvider>
+      </PostsProvider>
     </AuthProvider>
   );
 };

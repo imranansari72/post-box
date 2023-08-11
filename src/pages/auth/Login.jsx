@@ -47,20 +47,38 @@ const Login = () => {
     if (formIsValid) {
       setLoading(true);
       try {
-        const res = await axios.post(
-          process.env.REACT_APP_BASE_URL + "/auth/login",
-          {
-            email: email.value,
-            password: password.value,
-          },
-          {
-            withCredentials: true,
-          }
-        );
-        console.log('user from backend',res.data);
-        authCtx.login(res.data.user);
-        navigate("/", { replace: true });
-        setLoading(false);
+        axios
+          .post(
+            process.env.REACT_APP_BASE_URL + "/auth/login",
+            {
+              email: email.value,
+              password: password.value,
+            },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((res) => {
+            console.log("response from login api : ", res.data);
+            if (res.data.success) {
+              authCtx.login(res.data.user);
+              navigate("/", { replace: true });
+              setLoading(false);
+            } else {
+              setError(res.data.message);
+              setTimeout(() => {
+                setError(null);
+              }, 3000);
+              setLoading(false);
+            }
+          })
+          .catch((err) => {
+            console.log("error in login api : ", err);
+            setError(err.message);
+            setTimeout(() => {
+              setError(null);
+            }, 3000);
+          });
       } catch (err) {
         setError(err.message);
         setTimeout(() => {
@@ -158,5 +176,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

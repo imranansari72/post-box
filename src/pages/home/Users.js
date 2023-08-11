@@ -31,9 +31,9 @@ const Users = () => {
   }
 
   const userList = users.map((user) => {
-    return <UserCard key={user._id} {...user} />;
+    return <UserCard key={user.name} {...user} />;
   });
-  return <div className="p-2 flex flex-col gap-2">
+  return <div className="p-2 flex flex-col gap-2 max-h-screen">
     <h2 className="text-lg font-semibold">Peoples</h2>
     {userList}</div>;
 };

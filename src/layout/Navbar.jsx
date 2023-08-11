@@ -35,7 +35,7 @@ const Navbar = (props) => {
               </svg>
             </label>
           </div>
-          <div className="flex-1 text-xl font-bold lg:text-4xl px-2 mx-2 justify-center lg:justify-start">
+          <div className="flex-1 text-xl font-bold lg:text-4xl text-primary px-2 mx-2 justify-center lg:justify-start">
             Post Box
           </div>
           <div className="flex-none hidden lg:block">
